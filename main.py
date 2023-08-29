@@ -46,7 +46,7 @@ def image_editer(file_byte_string, translated_text_info_list):
     for info in translated_text_info_list:
         # get coordinates from text_info_list
         x = info['BoundingBox']['Left']
-        y = info['BoundingBox']['Height']
+        y = info['BoundingBox']['Top']
 
         # Custom font style and font size
         myFont = ImageFont.truetype('fonts/Helvetica.ttf', 55)
