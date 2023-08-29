@@ -38,7 +38,7 @@ def image_editer(file_byte_string, translated_text_info_list):
     img = Image.open(BytesIO(file_byte_string))
 
     # get sizes
-    width, height = img.size
+    img_width, img_height = img.size
     
     # Call draw Method to add 2D graphics in an image
     I1 = ImageDraw.Draw(img)
@@ -47,12 +47,21 @@ def image_editer(file_byte_string, translated_text_info_list):
         # get coordinates from text_info_list
         x = info['BoundingBox']['Left']
         y = info['BoundingBox']['Top']
+        txt_width = info['BoundingBox']['Width']
+        txt_height = info['BoundingBox']['Height']
+
+
+
+        # add rectangles
+        I1.rectangle(
+            [(img_width*x, img_height*y), ((img_width*x + txt_width*img_width), (img_height*y + txt_height*img_height))], fill=(255, 0, 0)
+        )
 
         # Custom font style and font size
         myFont = ImageFont.truetype('fonts/Helvetica.ttf', 55)
         
         # Add Text to an image
-        I1.text((width*x, height*y), "translated", font=myFont, fill=(255, 0, 0))
+        I1.text((img_width*x, img_height*y), "translated", font=myFont, fill=(1, 0, 0))
     
     # Display edited image
     #img.show()
