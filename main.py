@@ -6,15 +6,33 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+import constants
 import io
+# Import the os package
+import os
+
+# Import the openai package
+import openai
 
 s3_client = boto3.client('s3')
 textract_client = boto3.client('textract')
+openai.api_key = constants.API_KEY
 
 
 def translate_with_gpt(original_text):
-    # translate text
-    translated_text = "translated"
+    # Define the system message
+    system_msg = 'You are a helpful tranlator.'
+
+    # Define the user message
+    user_msg = 'Simply translate this text into Spainsh. The text is: '+ original_text
+    # Create a dataset using GPT
+    response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
+                                            messages=[{"role": "system", "content": system_msg},
+                                            {"role": "user", "content": user_msg}])
+    translated_text = response["choices"][0]["message"]["content"]
+
+    print(translated_text)
+
     return translated_text
 
 def geometry_analyzer(textract_response):
@@ -60,7 +78,7 @@ def image_editer(file_byte_string, translated_text_info_list):
         translated_txt_len = len(translated_txt)
 
         # the text has to be smaller than the height and width of the box
-        if (math.floor(txt_width*img_width/translated_txt_len) < math.floor(img_height*txt_height)):
+        if (math.floor(txt_width*img_width/translated_txt_len*2.5) < math.floor(img_height*txt_height)):
             font_size = math.floor(txt_width*img_width/translated_txt_len*2.5)  # for some reason calculated font size doesnt match WITHOUT *2.5
         else:
             font_size = math.floor(img_height*txt_height)
