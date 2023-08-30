@@ -1,7 +1,5 @@
-import datetime
-import json
+import math
 import boto3
-from textract import TextractWrapper
 # Importing the PIL library
 from io import BytesIO
 from PIL import Image
@@ -45,23 +43,36 @@ def image_editer(file_byte_string, translated_text_info_list):
 
     for info in translated_text_info_list:
         # get coordinates from text_info_list
-        x = info['BoundingBox']['Left']
-        y = info['BoundingBox']['Top']
+        anchor_x = info['BoundingBox']['Left']
+        anchor_y = info['BoundingBox']['Top']
         txt_width = info['BoundingBox']['Width']
         txt_height = info['BoundingBox']['Height']
 
 
-
-        # add rectangles
+        # add rectangles on top of the original text
         I1.rectangle(
-            [(img_width*x, img_height*y), ((img_width*x + txt_width*img_width), (img_height*y + txt_height*img_height))], fill=(255, 0, 0)
+            [(img_width*anchor_x - txt_width*img_width*0.1, img_height*anchor_y), ((img_width*anchor_x + txt_width*img_width + txt_width*img_width*0.1), (img_height*anchor_y + txt_height*img_height))], fill=(255, 0, 0)
         )
 
+
+        # text management
+        translated_txt = info['Text']
+        translated_txt_len = len(translated_txt)
+
+        # the text has to be smaller than the height and width of the box
+        if (math.floor(txt_width*img_width/translated_txt_len) < math.floor(img_height*txt_height)):
+            font_size = math.floor(txt_width*img_width/translated_txt_len*2.5)  # for some reason calculated font size doesnt match WITHOUT *2.5
+        else:
+            font_size = math.floor(img_height*txt_height)
+            print("size got determined based on the height")
+
         # Custom font style and font size
-        myFont = ImageFont.truetype('fonts/Helvetica.ttf', 55)
+        myFont = ImageFont.truetype('fonts/Helvetica.ttf',font_size)
+
+        
         
         # Add Text to an image
-        I1.text((img_width*x, img_height*y), "translated", font=myFont, fill=(1, 0, 0))
+        I1.text((img_width*anchor_x+(img_width*txt_width)/2, img_height*anchor_y+(img_height*txt_height)/2), translated_txt, font=myFont, fill=(1, 0, 0), anchor='mm')
     
     # Display edited image
     #img.show()
