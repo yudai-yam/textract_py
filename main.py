@@ -69,7 +69,7 @@ def image_editer(file_byte_string, translated_text_info_list):
 
         # add rectangles on top of the original text
         I1.rectangle(
-            [(img_width*anchor_x - txt_width*img_width*0.1, img_height*anchor_y), ((img_width*anchor_x + txt_width*img_width + txt_width*img_width*0.1), (img_height*anchor_y + txt_height*img_height))], fill=(255, 0, 0)
+            [(img_width*anchor_x - txt_width*img_width*0.1, img_height*anchor_y), ((img_width*anchor_x + txt_width*img_width + txt_width*img_width*0.1), (img_height*anchor_y + txt_height*img_height))], fill=(255, 255, 255)
         )
 
 
@@ -90,7 +90,7 @@ def image_editer(file_byte_string, translated_text_info_list):
         
         
         # Add Text to an image
-        I1.text((img_width*anchor_x+(img_width*txt_width)/2, img_height*anchor_y+(img_height*txt_height)/2), translated_txt, font=myFont, fill=(1, 0, 0), anchor='mm')
+        I1.text((img_width*anchor_x+(img_width*txt_width)/2, img_height*anchor_y+(img_height*txt_height)/2), translated_txt, font=myFont, fill=(0, 0, 0), anchor='mm')
     
     # Display edited image
     #img.show()
